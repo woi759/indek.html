@@ -431,6 +431,11 @@
             snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
             document.body.appendChild(snowflake);
         }
-    </script>
+    - name: Deploy Script to Bunny Edge Scripting
+  uses: BunnyWay/actions/deploy-script@main
+  with:
+    script_id: 19171
+    file: "script.ts"
+</script>
 </body>
 </html>
