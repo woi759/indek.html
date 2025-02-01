@@ -432,5 +432,10 @@
             document.body.appendChild(snowflake);
         }
     </script>
+- name: Deploy Script to Bunny Edge Scripting
+  uses: BunnyWay/actions/deploy-script@main
+  with:
+    script_id: 19171
+    file: "script.ts"
 </body>
 </html>
