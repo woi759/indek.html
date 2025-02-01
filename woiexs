@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cold War Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            background: #222;
+            color: white;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #111;
+            padding: 20px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar h2, .sidebar h3 {
+            color: cyan;
+            cursor: pointer;
+            padding: 10px 0;
+        }
+
+        .sidebar button {
+            width: 100%;
+            margin: 5px 0;
+            padding: 10px;
+            background: gray;
+            border: none;
+            cursor: pointer;
+            color: white;
+            display: block;
+        }
+
+        .sidebar input {
+            width: 100%;
+            margin: 5px 0;
+            padding: 5px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .main-content {
+            flex: 1;
+            text-align: center;
+            padding: 50px;
+            background: #000;
+            position: relative;
+        }
+
+        .main-content h1 {
+            font-size: 32px;
+            color: cyan;
+        }
+
+        .main-content input, .main-content button {
+            margin-top: 10px;
+            padding: 8px;
+        }
+
+        /* Giriş ve Kayıt Teması */
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+            margin: auto;
+        }
+
+        .container h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .container input {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .container button {
+            width: 100%;
+            padding: 10px;
+            background: #00796b;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .container button:hover {
+            background: #004d40;
+        }
+
+        .register-link {
+            margin-top: 10px;
+            display: block;
+        }
+
+        /* Profil simgesi */
+        .profile-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
+        .profile-menu {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 10px;
+            background: #333;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .profile-menu input {
+            display: block;
+            margin: 5px 0;
+        }
+
+        /* Profil görüntüleme */
+        .profile-view {
+            display: none;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .profile-view img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .close-profile {
+            cursor: pointer;
+            color: red;
+            margin-left: 10px;
+        }
+
+        /* Sohbet kutusu */
+        .chat-box {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: #333;
+            width: 350px;
+            padding: 10px;
+            display: none;
+        }
+
+        .chat-box input {
+            width: 80%;
+            padding: 5px;
+        }
+
+        .chat-box button {
+            padding: 5px;
+        }
+
+        .chat-message {
+            display: flex;
+            align-items: center;
+            background: #444;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 10px;
+        }
+
+        .chat-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .chat-username {
+            font-weight: bold;
+            color: cyan;
+            margin-right: 10px;
+        }
+
+        .chat-text {
+            color: white;
+        }
+
+        /* Grup Listesi */
+        .group-list {
+            margin-top: 10px;
+            border-top: 1px solid cyan;
+            padding-top: 10px;
+        }
+
+        .group-item {
+            display: flex;
+            align-items: center;
+            background: #222;
+            padding: 5px;
+            margin-top: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .group-item img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        /* X simgesi */
+        .close-chat {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: red;
+            font-size: 20px;
+        }
+
+        /* Kar-Buz Teması */
+        .snowflake {
+            position: absolute;
+            top: 0;
+            pointer-events: none;
+            color: #fff;
+            font-size: 1em;
+            opacity: 0.8;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(100vh);
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Giriş ve Kayıt Bölümü -->
+    <div class="container" id="loginContainer">
+        <h1>Giriş Yap</h1>
+        <input type="text" id="username" placeholder="Kullanıcı Adı" required>
+        <input type="password" id="password" placeholder="Şifre" required>
+        <button onclick="login()">Giriş</button>
+        <a href="#" class="register-link" onclick="showRegister()">Hesabınız yok mu? Kayıt Olun</a>
+    </div>
+
+    <div class="container hidden" id="registerContainer">
+        <h1>Kayıt Ol</h1>
+        <input type="text" id="newUsername" placeholder="Kullanıcı Adı" required>
+        <input type="password" id="newPassword" placeholder="Şifre" required>
+        <button onclick="register()">Kayıt Ol</button>
+        <a href="#" class="register-link" onclick="showLogin()">Zaten hesabınız var mı? Giriş Yapın</a>
+    </div>
+
+    <!-- Sol Yönetim Paneli -->
+    <div class="sidebar hidden" id="sidebar">
+        <h2>Ana Sayfa</h2>
+
+        <h3 onclick="toggleSection('admin-controls')">Yönetim</h3>
+        <div id="admin-controls" class="hidden">
+            <button onclick="addUser()">Kullanıcı Ekle</button>
+            <button onclick="removeUser()">Kullanıcı Kaldır</button>
+            <button onclick="banIP()">IP Banla</button>
+        </div>
+
+        <h3>Grup Oluştur</h3>
+        <input type="text" id="groupName" placeholder="İsim">
+        <input type="file" id="groupLogo">
+        <button onclick="createGroup()">Oluştur</button>
+
+        <!-- Grupların listesi -->
+        <div id="groupList" class="group-list"></div>
+    </div>
+
+    <!-- Orta Panel -->
+    <div class="main-content">
+        <h1>Cold War</h1>
+        <input type="text" id="searchBox" placeholder="Search...">
+        <button onclick="searchGoogle()">Search</button>
+        
+        <!-- Profil Simgesi -->
+        <img src="default-profile.png" alt="Profil" class="profile-icon" id="profileIcon" onclick="toggleProfileMenu()">
+        <div class="profile-menu" id="profileMenu">
+            <input type="file" id="profileImage" placeholder="Profil Resmi Yükle">
+            <button onclick="uploadProfile()">Yükle</button>
+            <div class="profile-view" id="profileView">
+                <img src="" id="profileImagePreview" alt="Profil Resmi">
+                <span id="profileUsername"></span>
+                <span class="close-profile" onclick="closeProfile()">X</span>
+            </div>
+        </div>
+
+        <!-- Sohbet Kutusu -->
+        <div class="chat-box" id="chatBox">
+            <h3>Sohbet</h3>
+            <div id="chatMessages"></div>
+            <input type="text" id="chatInput" placeholder="Mesaj yaz...">
+            <button onclick="sendMessage()">Gönder</button>
+        </div>
+
+        <button onclick="toggleChat()">Sohbeti Aç/Kapat</button>
+    </div>
+
+    <script>
+        function showRegister() {
+            document.getElementById("loginContainer").classList.add("hidden");
+            document.getElementById("registerContainer").classList.remove("hidden");
+        }
+
+        function showLogin() {
+            document.getElementById("registerContainer").classList.add("hidden");
+            document.getElementById("loginContainer").classList.remove("hidden");
+        }
+
+        function login() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            // Burada giriş doğrulama yapılabilir.
+            if (username && password) {
+                alert("Giriş başarılı!");
+                // Giriş işlemi sonrası sidebar'ı göster
+                document.getElementById("sidebar").classList.remove("hidden");
+                // Giriş yapıldığında loginContainer'ı gizle
+                document.getElementById("loginContainer").classList.add("hidden");
+                // Kayıt sayfasını gizle
+                document.getElementById("registerContainer").classList.add("hidden");
+            } else {
+                alert("Lütfen kullanıcı adı ve şifreyi doldurun.");
+            }
+        }
+
+        function register() {
+            const newUsername = document.getElementById("newUsername").value;
+            const newPassword = document.getElementById("newPassword").value;
+
+            // Burada kayıt işlemi yapılabilir.
+            if (newUsername && newPassword) {
+                alert("Kayıt başarılı! Giriş yapabilirsiniz.");
+                showLogin();
+            } else {
+                alert("Lütfen kullanıcı adı ve şifreyi doldurun.");
+            }
+        }
+
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            section.classList.toggle("hidden");
+        }
+
+        function toggleChat() {
+            const chatBox = document.getElementById("chatBox");
+            chatBox.style.display = chatBox.style.display === "none" ? "block" : "none";
+        }
+
+        function sendMessage() {
+            const messageInput = document.getElementById("chatInput");
+            const messageText = messageInput.value;
+            const chatMessages = document.getElementById("chatMessages");
+
+            if (messageText) {
+                const messageDiv = document.createElement("div");
+                messageDiv.className = "chat-message";
+                messageDiv.innerHTML = `<span class="chat-username">Kullanıcı:</span> <span class="chat-text">${messageText}</span>`;
+                chatMessages.appendChild(messageDiv);
+                messageInput.value = ""; // Mesaj kutusunu temizle
+            }
+        }
+
+        // Profil menüsü
+        function toggleProfileMenu() {
+            const menu = document.getElementById("profileMenu");
+            menu.style.display = menu.style.display === "block" ? "none" : "block";
+        }
+
+        function uploadProfile() {
+            const fileInput = document.getElementById("profileImage");
+            const imagePreview = document.getElementById("profileImagePreview");
+            const usernameDisplay = document.getElementById("profileUsername");
+            const profileView = document.getElementById("profileView");
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    profileView.style.display = "flex"; // Profil görünümünü göster
+                }
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+            usernameDisplay.innerText = document.getElementById("username").value; // Kullanıcı adını göster
+        }
+
+        function closeProfile() {
+            document.getElementById("profileView").style.display = "none"; // Profil görünümünü gizle
+        }
+
+        // Kar-buz temalı kar taneleri oluşturma
+        for (let i = 0; i < 100; i++) {
+            const snowflake = document.createElement('div');
+            snowflake.className = 'snowflake';
+            snowflake.innerHTML = '❄'; // Kar tanesi sembolü
+            snowflake.style.left = Math.random() * 100 + 'vw';
+            snowflake.style.animationDuration = Math.random() * 3 + 3 + 's';
+            snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
+            document.body.appendChild(snowflake);
+        }
+    </script>
+</body>
+</html>
